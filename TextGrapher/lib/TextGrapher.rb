@@ -3,20 +3,20 @@ class Position # class that contains the x and y positions of a point and what c
     def initialize(x, y, status)
         @xdim = x
         @ydim = y
-        @status = status
+        @status = status # this is rather redundant, but it can be used to filter what prints out if needed. Line 76 can be made conditional such that it checks if the position.status is true or false before printing a char, or a space respectively.
         @char = " "
     end
-    def maketrue
+    def maketrue 
         @char = "X"
         @status = true
     end
-    def makefalse
+    def makefalse 
         @status = false
     end
     def makenil
         @status = nil
     end
-    def makeline
+    def makeline # makes the character a "-" for any position, and sets it to print
         @char = "-"
         @status = true
     end
@@ -68,13 +68,13 @@ class Input_set # a class that contains the input prefrences and an array of pos
             str = "|"
             while count < self.positionset.length
                     if xeq(yield(self.positionset[count].xdim)) == yeq(self.positionset[count].ydim)  ## the block here determines the graph that is printed. 
-                        self.positionset[count].makeinput("#")  ## the character here is hardcoded for visability, but can be changed at will, and if commented out, the position objects can hold a character with the make input method, allowing for arbitrary printouts and multiple graphs
+                        self.positionset[count].makeinput("#")  ## the character "#" here is hardcoded for visability, but can be changed at will, and if commented out, the position objects can hold a character with the makeinput method, allowing for arbitrary printouts and multiple graphs
                     end 
-                       if  self.trackline_height == self.positionset[count].ydim 
+                       if  self.trackline_height == self.positionset[count].ydim  ## this adds a straight line at the hight of the trackline parameter if it is within the range. It can be harmless deleted or duplicated and modified to produce multiple graphs
                         self.positionset[count].makeinput("-")
                     end  
                     str = str+self.positionset[count].char       
-                if (count+@xstart) % (self.xrange) == 0   && count != 0
+                if (count+@xstart) % (self.xrange) == 0   && count != 0  ## this conditional evaluation determines when to break the graph up by row, if this evaluates incorrectly the graph will be warped or unreadable
                     str =  str +"|\n|"            ## do not graph with | because the lines are split by this character, or if required, change the spilt and this line to a different character but consistent in both places to maintain graph structure
                 end
                     count+=1
@@ -96,4 +96,4 @@ class Input_set # a class that contains the input prefrences and an array of pos
             end
             IO.write("#{self.filename}.txt", str.reverse)   ## this is the output writer you can change the file type if you can think of a way it benefits you
         end
-end  ## the minimum initialization set to create a graph is roughly object = Input_set.new(positions_tograph, xrange, yrange)  followed by graph_object.graphit and a yield block if needed to create the curve, if the positions hold the curve, simply yield the parameter with a .to_i on it for the conditionals on the printout method.
+end  ## the minimum initialization set to create a graph is roughly object = Input_set.new(positions_to_graph, xrange, yrange)  followed by graph_object.graphit and a yield block if needed to create the curve, if the positions hold the curve, simply yield the parameter with a .to_i on it for the conditionals on the printout method.
