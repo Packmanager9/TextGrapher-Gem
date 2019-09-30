@@ -1,3 +1,5 @@
+require "Chunky_Png"
+
 class Position # class that contains the x and y positions of a point and what character to print at that position
     attr_accessor  :xdim, :ydim, :status, :char
     def initialize(x, y, status)
@@ -75,7 +77,11 @@ class Input_set # a class that contains the input prefrences and an array of pos
                     end  
                     str = str+self.positionset[count].char       
                 if (count+@xstart) % (self.xrange) == 0   && count != 0  ## this conditional evaluation determines when to break the graph up by row, if this evaluates incorrectly the graph will be warped or unreadable
+                    if self.slopemode == true
+
+                    else
                     str =  str +"|\n|"            ## do not graph with | because the lines are split by this character, or if required, change the spilt and this line to a different character but consistent in both places to maintain graph structure
+                    end
                 end
                     count+=1
             end
@@ -94,6 +100,32 @@ class Input_set # a class that contains the input prefrences and an array of pos
             str = str +closedreverse[count]
             count +=1
             end
-            IO.write("#{self.filename}.txt", str.reverse)   ## this is the output writer you can change the file type if you can think of a way it benefits you
-        end
-end  ## the minimum initialization set to create a graph is roughly object = Input_set.new(positions_to_graph, xrange, yrange)  followed by graph_object.graphit and a yield block if needed to create the curve, if the positions hold the curve, simply yield the parameter with a .to_i on it for the conditionals on the printout method.
+
+            if self.slopemode == true
+            red = ChunkyPNG::Color.rgba(255, 0, 0, 255);
+green = ChunkyPNG::Color.rgba(0, 255, 0, 255);
+blue = ChunkyPNG::Color.rgba(0, 0, 255, 255);
+black = ChunkyPNG::Color.rgba(0, 0, 0, 255);
+white = ChunkyPNG::Color.rgba(255, 255, 255, 255);
+
+pngx = ChunkyPNG::Image.new(self.xrange, self.yrange, ChunkyPNG::Color::TRANSPARENT)
+# You can now set the color of pixels in this 20x20 PNG like so:
+
+pngarray = []
+pngarray = str.chars
+count = 0
+while pngarray[count] && self.positionset[count] != nil 
+    if pngarray[count] == " "  
+       pngx[(self.positionset[count].xdim), (self.positionset[count].ydim).to_i] = white
+    else
+        pngx[(self.positionset[count].xdim), (self.positionset[count].ydim).to_i] = black
+    end
+    count +=1
+end
+pngx.save("#{self.filename}.png")
+else
+           IO.write("#{self.filename}.txt", str.reverse)   ## this is the output writer you can change the file type if you can think of a way it benefits you
+end 
+           ## the minimum initialization set to create a graph is roughly object = Input_set.new(positions_to_graph, xrange, yrange)  followed by graph_object.graphit and a yield block if needed to create the curve, if the positions hold the curve, simply yield the parameter with a .to_i on it for the conditionals on the printout method.
+end
+end
